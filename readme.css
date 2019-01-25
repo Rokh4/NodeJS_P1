@@ -1,5 +1,10 @@
 
-.markdown-body .rokh_css_table table td, .markdown-body .rokh_css_table table th {
-	border: 0px solid white;
+   .rokh_1.rokh_css_div_table {
+	border: 2px solid red;
 	padding: 6px 13px;
-}
+	}
+    
+   .rokh_1.rokh_css_table {
+      margin-left:auto;
+      margin-right:auto;
+    }
