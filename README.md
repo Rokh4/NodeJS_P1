@@ -1,8 +1,11 @@
-<link rel="stylesheet" type="text/css" href="https://github.com/Rokh4/NodeJS_P1/blob/master/readme.css">
+<link rel="stylesheet" type="text/css" href="https://raw.githubusercontent.com/Rokh4/NodeJS_P1/master/readme.css">
+
+<script>
+alert("toto");
+</script>
 
 # NodeJS_P1
 learning purpose on Node.js - Project 1
-
 
 <div class="rokh_1 rokh_css_div_table" 
     >
