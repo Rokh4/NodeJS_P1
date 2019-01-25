@@ -1,4 +1,4 @@
-<link rel="stylesheet" type="text/css" href="readme.css">
+<link rel="stylesheet" type="text/css" href="https://github.com/Rokh4/NodeJS_P1/blob/master/readme.css">
 
 # NodeJS_P1
 learning purpose on Node.js - Project 1
