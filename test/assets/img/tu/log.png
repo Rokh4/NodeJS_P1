@@ -1,0 +1,87 @@
+check log mockito, champ private static final String ::: 
+
+import org.slf4j.Logger;
+import com.rokh4.unit.src.TestUtils;
+
+    @Mock
+    private Logger LOG;
+
+    // Il faut assert les logs sur tous les tests si activé
+    TestUtils.setFinalStatic(DuplicateServiceImpl.class, "LOG", LOG);
+
+    verify(LOG, Mockito.times(1)).error(any(String.class), any(Exception.class));
+    verify(LOG, Mockito.times(1)).debug("Une erreur est survenue, on laisse le traitement se poursuivre");
+    
+---------------------------------------------------------------------------
+
+perso ça marchait pas, alors j'ai utilisé plutôt : 
+
+import org.slf4j.LoggerFactory;
+
+    TestUtils.setFinalStatic(RokhController.class, "LOGGER", LoggerFactory.getLogger(RokhController.class));
+
+-> ça permet de passer dans les if suivants, mais on ne peut pas tester les params précisément.
+
+    if (LOGGER.isDebugEnabled()) {
+        LOGGER.debug("response : \n {}", response);
+    }
+--------------------------------------------------------------------------
+Autre technique : 
+
+    @Mock
+    private Logger LOG;
+...
+    TestUtils.setFinalStatic(RokhServiceImpl.class, "LOGGER", LOG);
+...
+
+    verify(LOG, Mockito.times(1)).error(eq("Impossible d'effectuer le traitement"), any(Exception.class));
+---------------------------------------------------------------------------
+
+package com.rokh4.unit.src;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+
+public class TestUtils {
+
+    // on masque le constructeur
+    private TestUtils() {
+    }
+
+    /**
+     * Helper resetting a private static final class by reflection. Warning : Cannot
+     * reset a string constant or any "compile time" private static final fields.
+     *
+     * @param clazz     the class containing the field
+     * @param fieldName the field name
+     * @param newValue  the new value
+     * @param           <T> the class type
+     */
+    public static <T> void setFinalStatic(Class<T> clazz, String fieldName, Object newValue) {
+        try {
+            Field field = clazz.getDeclaredField(fieldName);
+
+            field.setAccessible(true);
+
+            Field modifiersField = Field.class.getDeclaredField("modifiers");
+            modifiersField.setAccessible(true);
+            modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+
+            field.set(null, newValue);
+        } catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
+            // Make checked exceptions unchecked (il will break tests anyway)
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static <T> Constructor<T> setConstructorPublic(Class<T> clazz, Class<?>... parameterTypes) {
+        try {
+            Constructor<T> constructor = clazz.getDeclaredConstructor(parameterTypes);
+            constructor.setAccessible(true);
+            return constructor;
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
+    }
+}
