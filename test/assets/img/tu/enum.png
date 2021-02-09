@@ -1,0 +1,40 @@
+package com.rokh.model.enums;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonValue;
+
+@JsonFormat(shape = JsonFormat.Shape.OBJECT)
+public enum RokhEnum {
+
+    ROKH_1("R001"), ROKH_2("R002"), ROKH_3("R003"), ROKH_4("R004");
+
+    private String code;
+
+    RokhEnum(String code) {
+        this.code = code;
+    }
+
+    @JsonValue
+    public String getCode() {
+        return code;
+    }
+
+    public static RokhEnum getRokh(String value) {
+        for (RokhEnum v : values())
+            if (v.getCode().equalsIgnoreCase(value)) {
+                return v;
+            }
+        throw new IllegalArgumentException();
+    }
+
+    public static boolean isRokh(String value) {
+        boolean isRokh = false;
+        for (RokhEnum v : values()) {
+            if (v.getCode().equalsIgnoreCase(value)) {
+                isRokh = true;
+            }
+        }
+        return isRokh;
+    }
+
+}
