@@ -1,1 +1,123 @@
-A
+import org.mockito.ArgumentMatchers;
+
+    when(jdbc.query(any(String.class), ArgumentMatchers.<ResultSetExtractor<String>>any())).thenReturn(results);
+
+ArgumentMatchers.<ResultSetExtractor<String>>any()
+
+for the generic types
+
+------
+
+when stuck with an object to put in any(); just write any() alone will work as Mockito.anyObject()
+
+
+-------
+Mockito test a void method throws an exception :
+doThrow(new Exception()).when(mockedObject).methodReturningVoid(...);
+doThrow(new RuntimeException()).when(rokhService).sendMail(any(RokhAccess.class), any(String.class), any(String.class));
+
+parfois c'est impossible de doThrow(), alors on fera : 
+        when(rokhService.sendMail()).thenThrow(new DataAccessException("..."){ });
+        
+parfois dans le code on peut avoir un dernière clause catch (Excpetion e) et on peut avoir du mal à trouver quel exception doThrow afin d'y accéder.
+La solution \o/ qui marche 99% des cas, le fameux NPE :         
+Mockito.doThrow(new NullPointerException("Exception levée")).when(rokhService).sendMail(eq(sendMailRequest));
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
+
+    	verify(requestMapper, Mockito.times(1)).getDuplicateRequest(eq(personDto));
+
+    	when(mapperService.mapFromString(any(String.class), eq(ApiError.class))).thenReturn(new ApiError(409, "Conflict"));
+    	
+    	doThrow(new RokhException(HttpStatus.CONFLICT, "CONFLICT".getBytes())).when(restTemplate)
+    		.exchange(any(String.class), any(HttpMethod.class), any(HttpEntity.class), ArgumentMatchers.<Class<Boolean>>any());
+
+ex :  	when(restTemplate.exchange(any(String.class), eq(HttpMethod.POST), ArgumentMatchers.<HttpEntity<SecurityDto>>any(), eq(JwtDto.class)));
+
+    	try {
+    		dao.rokhDuplicateDetection(id, personDto);
+    		Assert.fail();
+    	} catch (RokhException e) {
+    		Assert.assertEquals(e.getMessage(), "Impossible de récuperer le doublon personne (id : XDS55432, cypher : 1c3xw5e32f4x6xc)");
+    	}
+    	
+
+import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatchers;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.springframework.test.util.ReflectionTestUtils;
+    @InjectMocks
+    private DuplicateDAODefault dao;
+
+    @Mock
+    private MapperService mapperService;
+
+        ReflectionTestUtils.setField(dao, "mapperService", mapperService);    
+// invoquer une méthode privée via le ReflectionTestUtils
+
+import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.test.util.ReflectionTestUtils;
+
+    @Test
+    public void addQueryParam() throws Exception {
+    String result = ReflectionTestUtils.invokeMethod(dao,"addQueryParam", Constants.VariablesValues.URL_SUCCESS, "XDS55432", "1c3xw5e32f4x6xc");
+   
+        Assert.assertEquals(Constants.VariablesValues.URL_SUCCESS, result);
+    }
+
+------------------------------------------------------
+créer une classe de test sur une classe abstraite :
+soit créer une classe concrète qui en hérite
+soit faire : 
+
+    private AbstractMapper mapper;
+
+    @Before
+    public void setup() {
+    // pour mocker une classe abstraite
+    mapper = Mockito.mock(AbstractMapper.class, Mockito.CALLS_REAL_METHODS);
+
+
+
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+
+@RunWith(PowerMockRunner.class)
+@PowerMockIgnore({ "javax.net.ssl.*", "javax.management.*", "com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*",
+                "org.w3c.*" })
+@PrepareForTest({ SecurityContextHolder.class })
+public class GlobalDefaultExceptionHandlerTest {
+
+....
+
+    @Mock
+    private SecurityContext securityContext;
+
+    @Mock
+    private Authentication authentication;
+
+...
+
+    @Before
+    public void setup() {
+        PowerMockito.mockStatic(SecurityContextHolder.class);
+
+        details = new JwtDetails();
+        details.setJwt(Constants.Jwt.JWT);
+       
+        when(SecurityContextHolder.getContext()).thenReturn(securityContext);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(authentication.getDetails()).thenReturn(details);
