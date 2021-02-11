@@ -1,0 +1,25 @@
+
+import java.sql.Timestamp;
+import org.joda.time.DateTime;
+import org.joda.time.Years;
+
+      ...
+      Timestamp timeStampBirthDate = new Timestamp(person.getDateNaissance());
+      DateTime birthDate = new DateTime(timeStampBirthDate);
+      ...
+
+    /**
+     * Retourne false si (dateNaissanceMinimum >= l'âge de la personne < dateNaissanceMaximum). Sinon true.
+     * 
+     * @param dateOfBirth la date de naissance de la personne
+     * @return
+     */
+    private boolean ageNotValide(DateTime dateOfBirth) {
+        DateTime now = new DateTime();
+        Years age = Years.yearsBetween(dateOfBirth, now);
+        return age.getYears() < 18 || age.getYears() >= 80;
+    }
+    
+    
+    
+    
