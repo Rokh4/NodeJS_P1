@@ -1,0 +1,9 @@
+[Desktop Entry]
+Comment=Smartgit
+Name=Smartgit
+Terminal=false
+Version=2020
+Type=Application
+Exec=/home/rokh/apps/smartgit-linux-20_2_3/smartgit/bin/smartgit.sh
+Icon=/home/rokh/apps/smartgit-linux-20_2_3/smartgit/bin/smartgit.svg
+Categories=Application;
